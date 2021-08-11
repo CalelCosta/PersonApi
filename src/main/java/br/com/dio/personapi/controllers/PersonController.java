@@ -1,50 +1,51 @@
 package br.com.dio.personapi.controllers;
 
-import br.com.dio.personapi.dto.request.PersonDTO;
-import br.com.dio.personapi.dto.response.MessageResponseDTO;
-import br.com.dio.personapi.exception.PersonNotFoundException;
+import br.com.dio.personapi.entities.Person;
 import br.com.dio.personapi.services.PersonService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/people")
-@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PersonController {
 
-    private final PersonService personService;
+    private PersonService personService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public MessageResponseDTO create(@RequestBody @Valid PersonDTO personDTO) {
-        return personService.create(personDTO);
+    @Autowired
+    public PersonController(PersonService personService) {
+        this.personService = personService;
     }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PersonDTO findById(@PathVariable Long id) throws PersonNotFoundException {
-        return personService.findById(id);
+    @PostMapping
+    public Person createPerson(@RequestBody Person person){
+        return personService.savePerson(person);
     }
 
     @GetMapping
-    public List<PersonDTO> listAll() {
-        return personService.listAll();
+    public List<Person> getPerson(){
+        return personService.findAll();
     }
 
-    @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public MessageResponseDTO update(@PathVariable Long id, @RequestBody @Valid PersonDTO personDTO) throws PersonNotFoundException {
-        return personService.update(id, personDTO);
+    @GetMapping("/{id}")
+    public Person getPersonById(@PathVariable("id") Long id) throws Exception {
+        return personService.findById(id).orElseThrow(() -> new Exception("Person not found!"));
+    }
+
+    @PutMapping
+    public Person updatePerson(@RequestBody Person person){
+        return personService.updatePerson(person);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) throws PersonNotFoundException {
-        personService.delete(id);
+    public ResponseEntity deletePerson(@PathVariable("id") Long id) throws Exception {
+        try {
+            personService.deletePerson(id);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return (ResponseEntity<Person>) ResponseEntity.ok();
     }
 }

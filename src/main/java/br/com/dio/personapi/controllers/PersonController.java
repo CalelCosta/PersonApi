@@ -1,5 +1,6 @@
 package br.com.dio.personapi.controllers;
 
+import br.com.dio.personapi.dto.PersonDTO;
 import br.com.dio.personapi.entities.Person;
 import br.com.dio.personapi.message.MessageDTO;
 import br.com.dio.personapi.services.PersonService;
@@ -22,11 +23,7 @@ public class PersonController {
 
     @PostMapping
     public MessageDTO createPerson(@RequestBody Person person){
-        Person savePerson = personService.savePerson(person);
-        return MessageDTO
-                .builder()
-                .message("Person created with ID " + savePerson.getId())
-                .build();
+        return personService.createPerson(person);
     }
 
     @GetMapping

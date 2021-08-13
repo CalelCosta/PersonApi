@@ -1,7 +1,9 @@
 package br.com.dio.personapi.services;
 
 
+
 import br.com.dio.personapi.entities.Person;
+import br.com.dio.personapi.message.MessageDTO;
 import br.com.dio.personapi.repositories.PersonRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,6 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    public Person savePerson(Person person) {
-        return personRepository.save(person);
-    }
-
     public List<Person> findAll() {
         return personRepository.findAll();
     }
@@ -38,5 +36,13 @@ public class PersonService {
 
     public Optional<Person> findById(Long id) {
         return personRepository.findById(id);
+    }
+
+    public MessageDTO createPerson(Person person) {
+        Person savePerson = personRepository.save(person);
+        return MessageDTO
+                .builder()
+                .message("Person created with ID " + savePerson.getId())
+                .build();
     }
 }

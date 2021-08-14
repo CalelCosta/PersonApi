@@ -1,9 +1,8 @@
 package br.com.dio.personapi.services;
 
-
-
 import br.com.dio.personapi.dto.PersonDTO;
 import br.com.dio.personapi.entities.Person;
+import br.com.dio.personapi.exception.PersonNotFoundException;
 import br.com.dio.personapi.mapper.PersonMapper;
 import br.com.dio.personapi.message.MessageDTO;
 import br.com.dio.personapi.repositories.PersonRepository;
@@ -27,6 +26,7 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
+    // Find ALL
     public List<PersonDTO> findAll() {
         List<Person> getAllPersons = personRepository.findAll();
         return getAllPersons.stream()
@@ -34,18 +34,24 @@ public class PersonService {
                 .collect(Collectors.toList());
     }
 
+    // Updtae Method
     public Person updatePerson(Person person) {
         return personRepository.save(person);
     }
 
+    // Delete Method
     public void deletePerson(Long id) {
         personRepository.deleteById(id);
     }
 
-    public Optional<Person> findById(Long id) {
-        return personRepository.findById(id);
+    // Get By ID
+    public PersonDTO findById(Long id) throws PersonNotFoundException {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
+        return personMapper.toDTO(person);
     }
 
+    // Post Method
     public MessageDTO createPerson(PersonDTO personDTO) {
         Person personToSave = personMapper.toModel(personDTO);
 

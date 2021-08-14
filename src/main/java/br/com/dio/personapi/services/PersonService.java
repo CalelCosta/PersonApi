@@ -2,7 +2,9 @@ package br.com.dio.personapi.services;
 
 
 
+import br.com.dio.personapi.dto.PersonDTO;
 import br.com.dio.personapi.entities.Person;
+import br.com.dio.personapi.mapper.PersonMapper;
 import br.com.dio.personapi.message.MessageDTO;
 import br.com.dio.personapi.repositories.PersonRepository;
 
@@ -16,6 +18,8 @@ import java.util.Optional;
 public class PersonService {
 
     private final PersonRepository personRepository;
+
+    private final PersonMapper personMapper = PersonMapper.INSTANCE;
 
     @Autowired
     public PersonService(PersonRepository personRepository) {
@@ -38,8 +42,10 @@ public class PersonService {
         return personRepository.findById(id);
     }
 
-    public MessageDTO createPerson(Person person) {
-        Person savePerson = personRepository.save(person);
+    public MessageDTO createPerson(PersonDTO personDTO) {
+        Person personToSave = personMapper.toModel(personDTO);
+
+        Person savePerson = personRepository.save(personToSave);
         return MessageDTO
                 .builder()
                 .message("Person created with ID " + savePerson.getId())

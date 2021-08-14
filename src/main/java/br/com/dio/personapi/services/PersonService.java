@@ -40,14 +40,16 @@ public class PersonService {
     }
 
     // Delete Method
-    public void deletePerson(Long id) {
+    public void deletePerson(Long id) throws PersonNotFoundException {
+        verifyIfExists(id);
+
         personRepository.deleteById(id);
     }
 
     // Get By ID
     public PersonDTO findById(Long id) throws PersonNotFoundException {
-        Person person = personRepository.findById(id)
-                .orElseThrow(() -> new PersonNotFoundException(id));
+        Person person = verifyIfExists(id);
+
         return personMapper.toDTO(person);
     }
 
@@ -60,5 +62,11 @@ public class PersonService {
                 .builder()
                 .message("Person created with ID " + savePerson.getId())
                 .build();
+    }
+
+    // Verify Method
+    private Person verifyIfExists(Long id) throws PersonNotFoundException {
+       return personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
     }
 }

@@ -5,6 +5,7 @@ import br.com.dio.personapi.entities.Person;
 import br.com.dio.personapi.message.MessageDTO;
 import br.com.dio.personapi.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +24,13 @@ public class PersonController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public MessageDTO createPerson(@RequestBody @Valid PersonDTO personDTO){
         return personService.createPerson(personDTO);
     }
 
     @GetMapping
-    public List<Person> getPerson(){
+    public List<PersonDTO> getAllPersons(){
         return personService.findAll();
     }
 

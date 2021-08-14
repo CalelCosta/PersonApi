@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonService {
@@ -26,8 +27,11 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    public List<Person> findAll() {
-        return personRepository.findAll();
+    public List<PersonDTO> findAll() {
+        List<Person> getAllPersons = personRepository.findAll();
+        return getAllPersons.stream()
+                .map(personMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public Person updatePerson(Person person) {
